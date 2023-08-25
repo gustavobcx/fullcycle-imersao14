@@ -1,0 +1,27 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  web:
+    build: .
+    environment:
+      DATABASE_URL: 'mongodb://root:example@database:27017/routes?authSource=admin&replicaSet=replicaset'
+    # volumes:
+    #   - ./:/app
+    #   - /app/node_modules
+    ports:
+      - 3000:3000
+    depends_on:
+      - database
+
+  database:
+    image: bitnami/mongodb:5.0.17
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      # MONGODB_ADVERTISED_HOSTNAME: localhost
+      MONGODB_ROOT_PASSWORD: example
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_REPLICA_SET_KEY: 123456
+      MONGODB_DATABASE: routes

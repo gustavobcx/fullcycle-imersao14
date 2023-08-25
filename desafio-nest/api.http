@@ -1,0 +1,18 @@
+### Find
+GET http://localhost:3000/api/routes
+
+### Create
+POST http://localhost:3000/api/routes
+Content-Type: application/json
+
+{
+    "name": "route test 1",
+    "source": {
+        "lat": 10.1,
+        "lng": 10.1
+    },
+    "destination": {
+        "lat": 10.2,
+        "lng": 10.2
+    }
+}
