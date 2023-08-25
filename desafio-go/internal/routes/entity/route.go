@@ -11,19 +11,19 @@ type RouteRepository interface {
 	Find() (*[]Route, error)
 }
 
-type StringInterfaceMap map[string]interface{}
-
 type Route struct {
-	ID          int64              `json:"id"`
-	Name        string             `json:"name"`
-	Source      StringInterfaceMap `json:"source" db:"source"`
-	Destination StringInterfaceMap `json:"destination" db:"destination"`
+	ID          int64      `json:"id"`
+	Name        string     `json:"name"`
+	Source      Coordinate `json:"source" db:"source"`
+	Destination Coordinate `json:"destination" db:"destination"`
 }
 
-func (m StringInterfaceMap) Value() (driver.Value, error) {
-	if len(m) == 0 {
-		return nil, nil
-	}
+type Coordinate struct {
+	Lat float64
+	Lng float64
+}
+
+func (m Coordinate) Value() (driver.Value, error) {
 	j, err := json.Marshal(m)
 	if err != nil {
 		return nil, err
@@ -31,9 +31,9 @@ func (m StringInterfaceMap) Value() (driver.Value, error) {
 	return driver.Value([]byte(j)), nil
 }
 
-func (m *StringInterfaceMap) Scan(src interface{}) error {
+func (m *Coordinate) Scan(src interface{}) error {
 	var source []byte
-	_m := make(map[string]interface{})
+	_m := Coordinate{}
 
 	switch src.(type) {
 	case []uint8:
@@ -41,12 +41,12 @@ func (m *StringInterfaceMap) Scan(src interface{}) error {
 	case nil:
 		return nil
 	default:
-		return errors.New("incompatible type for StringInterfaceMap")
+		return errors.New("incompatible type for Coordinate")
 	}
 	err := json.Unmarshal(source, &_m)
 	if err != nil {
 		return err
 	}
-	*m = StringInterfaceMap(_m)
+	*m = Coordinate(_m)
 	return nil
 }
