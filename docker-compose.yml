@@ -1,0 +1,20 @@
+version: "3.1"
+
+services:
+  web:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+  database:
+    image: mysql:8.0.30-debian
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: routes
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./mysql/scripts:/docker-entrypoint-initdb.d
+      # - ./mysql/data:/var/lib/mysql
